@@ -1,0 +1,16 @@
+---
+- name: copy cronolog-1.6.2.tar.gz
+  copy:
+    src: cronolog-1.6.2.tar.gz
+    dest: /tmp/cronolog-1.6.2.tar.gz
+
+- name: unarchive cronolog-1.6.2
+  shell: tar -zxvf cronolog-1.6.2.tar.gz
+  args:
+    creates: cronolog-1.6.2
+    chdir: /tmp
+
+- name: compile and install cronolog
+  shell: ./configure && make && make install
+  args:
+    chdir: /tmp/cronolog-1.6.2

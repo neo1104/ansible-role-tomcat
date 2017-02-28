@@ -1,0 +1,16 @@
+---
+# tasks file for roles/tomcat
+
+- name: get cronolog version
+  shell: cronolog -V
+  register: cronolog_ver
+  ignore_errors: True
+  changed_when: False
+
+
+- name: include install_cronolog.yml
+  include: install_cronolog.yml
+  when: '"cronolog version 1.6.2" not in cronolog_ver.stderr'
+
+- name: include configure.yml
+  include: configure.yml

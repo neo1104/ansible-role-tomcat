@@ -1,0 +1,40 @@
+---
+- name: create tomcat server user
+  user:
+    name: "{{ tomcat_user }}"
+    state: present
+
+- name: install tomcat
+  copy:
+    src: tomcat.tar.gz
+    dest: "{{tomcat_home}}/tomcat.tar.gz"
+
+- name: unarchive tomcat.tar.gz
+  shell: "tar -zxvf tomcat.tar.gz && rm -rf tomcat.tar.gz"
+  args:
+    creates: "{{ tomcat_home}}/tomcat"
+    chdir: "{{ tomcat_home }}"
+
+- name: change owner of tomcat
+  file:
+    path: "{{ tomcat_home }}/tomcat"
+    recurse: True
+    owner: "{{ tomcat_user }}"
+    group: "{{ tomcat_group }}"
+    state: directory
+
+- name: configure tomcat server.xml
+  template:
+    src: server.xml.j2
+    dest: "{{ tomcat_home }}/tomcat/conf/server.xml"
+    mode: 0600
+    owner: "{{ tomcat_user }}"
+    group: "{{ tomcat_group }}"
+
+- name: configure tomcat catalina.sh
+  template:
+    src: catalina.sh.j2
+    dest: "{{ tomcat_home }}/tomcat/bin/catalina.sh"
+    mode: 0744
+    owner: "{{ tomcat_user }}"
+    group: "{{ tomcat_group }}"
